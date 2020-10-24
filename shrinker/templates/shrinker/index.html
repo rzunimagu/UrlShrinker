@@ -1,0 +1,39 @@
+{% extends "shrinker/base.html" %}
+{% load static %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1>{{ title }}</h1>
+        </div>
+    </div>
+    <form id="url_form" data-domen="{{ current_site }}" action="{% url "urls-list" %}">{% csrf_token %}
+    <div class="row">
+        <div class="col-12">
+                {{ form.as_p }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-right">
+            <input type=submit value="Создать ссылку" class="btn btn-success"/>
+        </div>
+    </div>
+    </form>
+    <div class="row">
+        <div class="col-12">
+            {% include "shrinker/blocks/success_url_created.html" %}
+        </div>
+    </div>
+    {% include "shrinker/blocks/url_list.html" %}
+    <div class="row">
+        <div class="col-12">
+
+        </div>
+    </div>
+
+{% endblock %}
+{% block additional_js %}
+    <script src="{% static "shrinker/clipboard.js" %}"></script>
+    <script src="{% static "shrinker/api.js" %}"></script>
+    <script src="{% static "shrinker/csrf.js" %}"></script>
+
+{% endblock %}
