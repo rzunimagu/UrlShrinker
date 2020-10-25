@@ -74,7 +74,7 @@ class RedirectToOriginalUrlView(RedirectView):
         return original_url
 
     def get_redirect_url(self, *args, **kwargs):
-        return self.get_redirect_url_nocache(*args, **kwargs)
+        return self.get_redirect_url_cache(*args, **kwargs)
 
 
 def handler404(request, *args, **kwargs):
