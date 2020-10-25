@@ -1,5 +1,3 @@
-let csrftoken;
-
 $(document).ready(function() {
     csrftoken = $(this).find('[name="csrfmiddlewaretoken"]').val();
     let is_submiting = false;
