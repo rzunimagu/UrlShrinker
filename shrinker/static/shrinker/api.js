@@ -30,12 +30,16 @@ $(document).ready(function() {
 
     function delete_url(event) {
         event.preventDefault();
-        let data = {
-            'csrfmiddlewaretoken': csrftoken
-        };
+        $('#modal-delete .modal-body').html($(this).data('original'));
+        $('#delete-form-button').data('url', $(this).attr("href"));
+        $('#modal-delete').modal();
+    }
+
+    $('#delete-form-button').bind('click', function(event) {
+        event.preventDefault();
         $.ajax({
             type: "DELETE",
-            url: $(this).attr("href"),
+            url: $(this).data("url"),
             success: function (response) {
                 console.log(response);
                 refresh_url_list();
@@ -47,7 +51,7 @@ $(document).ready(function() {
             }
         });
 
-    }
+    });
 
     function add_redirect_url(redirect_data) {
         let new_message = $(".url-info.d-none").clone();
@@ -117,7 +121,7 @@ $(document).ready(function() {
                 html: '<a class="copy-url" href="'+domain + url_list[i].url_new+'">(copy)</a>',
             }));
             tr.append($('<td>', {
-                html: '<a class="delete-url" href="'+api_url+url_list[i].pk+'">(del)</a>'
+                html: '<a class="delete-url" data-original="'+url_list[i].url_original+'" href="'+api_url+url_list[i].pk+'">(del)</a>'
             }));
             console.log(tr)
             $('#created-url-list tbody').append(tr);
@@ -125,6 +129,7 @@ $(document).ready(function() {
             $('#created-url-list tbody .copy-url').bind('click', copy_previous_link);
             $('#created-url-list tbody .delete-url').bind('click', delete_url);
     }
+
     function refresh_url_list() {
         $.ajax({
             type: "GET",
