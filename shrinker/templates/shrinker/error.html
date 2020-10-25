@@ -1,1 +1,18 @@
 {% extends "shrinker/base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1>{{ title }}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center">
+            Пожалуйста, обратитесь к системному администратору(<a href="mailto:{{ email }}">{{ email }}</a>) и опишите возникшую проблему.
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="/">перейти на главную страницу</a>
+        </div>
+    </div>
+{% endblock %}
