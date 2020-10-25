@@ -127,6 +127,19 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+CACHE_TIMEOUT_SECONDS = 5 * 60
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

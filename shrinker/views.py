@@ -1,11 +1,15 @@
+from django.views.generic import TemplateView, RedirectView
 from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.core.cache import cache
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+
 from rest_framework import viewsets
-from rest_framework.pagination import CursorPagination
+
 from .models import UrlRedirect
+from .forms import UrlRedirectForm
 from .serializers import UrlRedirectSerializer
 from .utilities import create_new_user
-from django.views.generic import TemplateView, RedirectView
-from .forms import UrlRedirectForm
 
 
 class UrlRedirectViewSet(viewsets.ModelViewSet):
@@ -43,5 +47,13 @@ class MainPageView(TemplateView):
 
 class RedirectToOriginalUrlView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        url = get_object_or_404(UrlRedirect, url_new=kwargs['url_new'])
-        return url.url_original
+        if kwargs['url_new'] in cache:
+            original_url = cache.get(kwargs['url_new'])
+        else:
+            original_url = get_object_or_404(UrlRedirect, url_new=kwargs['url_new']).url_original
+            cache.set(
+                kwargs['url_new'],
+                original_url,
+                timeout = getattr(settings, 'CACHE_TIMEOUT_SECONDS', DEFAULT_TIMEOUT)
+            )
+        return original_url
