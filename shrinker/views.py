@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.shortcuts import render
-from django.template import RequestContext
 
 from rest_framework import viewsets
 
@@ -75,7 +74,7 @@ class RedirectToOriginalUrlView(RedirectView):
         return original_url
 
     def get_redirect_url(self, *args, **kwargs):
-        return self.get_redirect_url(*args, **kwargs)
+        return self.get_redirect_url_nocache(*args, **kwargs)
 
 
 def handler404(request, *args, **kwargs):
