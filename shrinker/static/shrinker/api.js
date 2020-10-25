@@ -7,6 +7,7 @@ $(document).ready(function() {
     let api_url = $('#url_form').attr('action');
     let paginator = $('.paginator-object').detach();
 
+    // прячем/показываем поле для ввода короткого url в зависимости от способа ввода (ручной/автоматический)
     $('#id_edit_new').bind('change', function (event) {
         if ($(this).val() == 'auto') {
             $('#id_url_new').parent().addClass("d-none");
@@ -17,17 +18,20 @@ $(document).ready(function() {
     });
     $('#id_edit_new').trigger("change");
 
+    // копируем содержимое ссылки в clipboard
     function copy_previous_link(event){
        event.preventDefault();
        copyTextToClipboard($(this).attr("href"));
     }
 
+    // удаляем всю информацию об ошибках на форме ввода урл
     function hide_messages() {
         $('#url_form .text-danger').remove();
         $('#url_form .border-danger').removeClass("border-danger");
         $(".url-info.d-block").remove();
     }
 
+    // при удалении ранее сохраненного URL, выдаем диалоговое окно с просьбой о подтверждении
     function delete_url(event) {
         event.preventDefault();
         $('#modal-delete .modal-body').html($(this).data('original'));
@@ -35,13 +39,13 @@ $(document).ready(function() {
         $('#modal-delete').modal();
     }
 
+    // вызываем REST API для удаления элемента при подтверждении
     $('#delete-form-button').bind('click', function(event) {
         event.preventDefault();
         $.ajax({
             type: "DELETE",
             url: $(this).data("url"),
             success: function (response) {
-                console.log(response);
                 refresh_url_list();
             },
             error: function( jqXHR , textStatus, errorThrown) {
@@ -50,9 +54,9 @@ $(document).ready(function() {
             complete: function (xhr, textStatus) {
             }
         });
-
     });
 
+    // добавляем сообщение о том, что новый редирект добавлен с указанием нового адреса
     function add_redirect_url(redirect_data) {
         let new_message = $(".url-info.d-none").clone();
         new_message.addClass("d-block").addClass("alert-success").removeClass("d-none");
@@ -65,12 +69,14 @@ $(document).ready(function() {
         new_message.find(".copy-url").bind('click', copy_previous_link);
     }
 
+    // смена текущей страницы на пагинаторе
     function select_page(event) {
         event.preventDefault();
         current_page = $(this).data("page");
         refresh_url_list();
     }
 
+    // создаем пагинатор на основе полученного количества элементов
     function create_paginator(count) {
         $('#top-paginator-container nav').remove();
         if (count < 0) return;
@@ -102,6 +108,7 @@ $(document).ready(function() {
         new_paginator.find("a").bind("click", select_page);
     }
 
+    // формируем таблицу со списком сохраненных url
     function show_urls(url_list) {
         if (url_list.length == 0) {
             $('#created-url-list').addClass('d-none');
@@ -123,19 +130,18 @@ $(document).ready(function() {
             tr.append($('<td>', {
                 html: '<a class="delete-url" data-original="'+url_list[i].url_original+'" href="'+api_url+url_list[i].pk+'">(del)</a>'
             }));
-            console.log(tr)
             $('#created-url-list tbody').append(tr);
         }
             $('#created-url-list tbody .copy-url').bind('click', copy_previous_link);
             $('#created-url-list tbody .delete-url').bind('click', delete_url);
     }
 
+    // отправляем запрос к REST API, что бы получит список сохраненных урл
     function refresh_url_list() {
         $.ajax({
             type: "GET",
             url: api_url + "?limit="+page_size+"&offset=" + (current_page * page_size),
             success: function (response) {
-                console.log(response);
                 create_paginator(response.count - 1);
                 show_urls(response.results);
             },
@@ -148,17 +154,16 @@ $(document).ready(function() {
         });
     }
 
+    // при отправке пользователем формы, вызываем REST API для сохранения формы и выводим сообщение(ошибку или успех)
     $('#url_form').bind("submit", function (event) {
         event.preventDefault();
         if (is_submiting) return;  // блокируем отправку следующего запроса, пока не получим результат последнего
         hide_messages();
         is_submiting = true;
 
-        //let csrftoken = $(this).find('[name="csrfmiddlewaretoken"]').val();
         let data = {
             'url_original': $("#id_url_original").val(),
             'url_new': $("#id_url_new").val().replace(domain, ""),
-            //'csrfmiddlewaretoken': csrftoken
         };
         $.ajax({
             type: "POST",
@@ -171,7 +176,6 @@ $(document).ready(function() {
             },
             error: function( jqXHR , textStatus, errorThrown) {
                 $.each(jqXHR.responseJSON, function(field_name, error_list) {
-                    console.log(field_name, error_list);
                     $('#id_'+field_name).addClass("border-danger");
                     for (let i=0; i < error_list.length; i++) {
                         $('#id_'+field_name).after($("<span>", {
@@ -188,5 +192,5 @@ $(document).ready(function() {
         });
     });
 
-    refresh_url_list();
+    refresh_url_list();  // обновляем список сохраненных даннных прии первой загрузке страницы
 });

@@ -5,11 +5,12 @@ from django.contrib.auth import login
 
 from shrinker.serializers import UserNameSerializer
 
+
 logger = logging.getLogger(__name__)
 
 
 def create_new_user(request):
-    """создаем нового пользователя"""
+    """создаем нового пользователя и логинимся под ним"""
     user_name = UserNameSerializer(data={'username': request.session.get('username', None)})
     while not user_name.is_valid():
         request.session['username'] = str(uuid4())

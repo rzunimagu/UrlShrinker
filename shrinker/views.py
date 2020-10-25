@@ -30,6 +30,7 @@ class UrlRedirectViewSet(viewsets.ModelViewSet):
 
 
 class MainPageView(TemplateView):
+    """главная страница сайта"""
     template_name = "shrinker/index.html"
 
     def get_context_data(self, **kwargs):
@@ -46,6 +47,8 @@ class MainPageView(TemplateView):
 
 
 class RedirectToOriginalUrlView(RedirectView):
+    """перенаправление с коротких ссылок на полные"""
+
     def get_redirect_url(self, *args, **kwargs):
         if kwargs['url_new'] in cache:
             original_url = cache.get(kwargs['url_new'])
@@ -54,6 +57,6 @@ class RedirectToOriginalUrlView(RedirectView):
             cache.set(
                 kwargs['url_new'],
                 original_url,
-                timeout = getattr(settings, 'CACHE_TIMEOUT_SECONDS', DEFAULT_TIMEOUT)
+                timeout=getattr(settings, 'CACHE_TIMEOUT_SECONDS', DEFAULT_TIMEOUT)
             )
         return original_url
