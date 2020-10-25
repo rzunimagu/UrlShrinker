@@ -69,7 +69,7 @@ $(document).ready(function() {
 
     function create_paginator(count) {
         $('#top-paginator-container nav').remove();
-        if (count <= 0) return;
+        if (count < 0) return;
         let page_count = Math.floor(count / page_size);
         let new_paginator = paginator.clone();
         if (current_page === 0) {
@@ -99,6 +99,11 @@ $(document).ready(function() {
     }
 
     function show_urls(url_list) {
+        if (url_list.length == 0) {
+            $('#created-url-list').addClass('d-none');
+        } else {
+            $('#created-url-list').removeClass('d-none');
+        }
         $('#created-url-list tbody tr').remove();
         for (let i=0; i< url_list.length; i ++) {
             let tr = $('<tr>');
