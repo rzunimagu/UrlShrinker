@@ -18,7 +18,7 @@ class UrlRedirectSerializer(serializers.ModelSerializer):
         помимо стандартной валидации, проверяем, что бы введенный урл не пересекался с путями,
         которые используются сайтом для работы
         """
-        if value in ['admin', 'api']:
+        if value in ['admin', 'api', 'static']:
             raise serializers.ValidationError("Указанный короткий УРЛ уже занят")
         else:
             return value or UrlRedirect.generate_new_url()
