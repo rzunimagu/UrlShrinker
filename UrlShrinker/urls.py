@@ -17,7 +17,7 @@ urlpatterns = []
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns = [
+urlpatterns += [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('<slug:url_new>', views.RedirectToOriginalUrlView.as_view(), name='redirect-url'),
